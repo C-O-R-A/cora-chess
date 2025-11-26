@@ -2,5 +2,6 @@ numpy
 pillow
 matplotlib
 chess
+torch
 
 git+https://github.com/machine0herald/CoDI.git@main
