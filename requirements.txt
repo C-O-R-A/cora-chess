@@ -3,5 +3,5 @@ pillow
 matplotlib
 chess
 torch
-
+opencv-python
 git+https://github.com/machine0herald/CoDI.git@main
