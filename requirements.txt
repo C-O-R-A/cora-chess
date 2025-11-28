@@ -4,4 +4,8 @@ matplotlib
 chess
 torch
 opencv-python
+kagglehub
+seaborn
+torchviz
+pandas
 git+https://github.com/machine0herald/CoDI.git@main
