@@ -2,9 +2,10 @@ import chess
 import torch 
 from torch.utils.data import Dataset
 import torch.nn as nn
+import numpy as np
 import pandas as pd
-from compile_data import process_color, process_date_played, process_move_number, convert_board_to_tensor, convert_move_to_tensor, expand_tensor
-
+import sys
+from datetime import datetime
 
 def Load_player_data(player_name, move_csv_path, game_csv_path, eco_csv_path):
     '''
@@ -19,7 +20,7 @@ def Load_player_data(player_name, move_csv_path, game_csv_path, eco_csv_path):
     # Filter moves made by the target player
     move_data = move_data[move_data['player'].str.contains(player_name, na=False)]
 
-    # Filter board positions after opponent moves
+    # Filter board positions before target player moves
     board_data = board_data[~board_data['player'].str.contains(player_name, na=False)]
 
     # Calculate corresponding board move_no_pair for each move:
@@ -81,60 +82,85 @@ def Load_player_data(player_name, move_csv_path, game_csv_path, eco_csv_path):
     combined_data['white_count'] = combined_data['white_count'].fillna(starting_white_count).astype(int)
     combined_data['black_count'] = combined_data['black_count'].fillna(starting_black_count).astype(int)
     combined_data['color_move'] = combined_data['color_move'].fillna('Unknown')
+
     combined_data['move'] = combined_data['move'].fillna('')  # or whatever default
 
     # Save combined data
-    combined_data.to_csv("magnus_move_data_6.csv", index=False)
+    combined_data.to_csv("loaded_magnus_move_data.csv", index=False)
 
-    # # For debugging, print fen types
-    # print(play_data['fen'].apply(type).value_counts())
+    # For debugging, print fen types
+    print(play_data['fen'].apply(type).value_counts())
 
     return combined_data, eco_mapping
 
 class ChessDataset(Dataset):
-    def __init__(self, data, use_output_tensors=False):
-        super(ChessDataset, self).__init__()
-        self.data = data[0]
-        self.eco_to_idx = data[1]
-        self.use_output_tensors = use_output_tensors
+    def __init__(self, data):
+        """
+        data: tuple (DataFrame, eco_to_idx) or just DataFrame
+        """
+        self.data = data[0] if isinstance(data, tuple) else data
 
     def __len__(self):
-        return self.data.shape[0]
+        return len(self.data)
     
-    def __getitem__(self, index):
-        row = self.data.iloc[index]
+    def __getitem__(self, idx):
+        row = self.data.iloc[idx]
+        fen = row['fen']
+        board = chess.Board(fen)
+
+        # Set correct turn
+        board.turn = chess.WHITE if row['color_move'] == 'White' else chess.BLACK
+
+        # Legal moves
+        legal_moves = [(m.from_square, m.to_square) for m in board.legal_moves]
+        legal_moves_tensor = torch.tensor(legal_moves, dtype=torch.float32)  # [N,2]
+
+        # Target index in legal moves
+        target_move = (chess.Move.from_uci(row['move']).from_square,
+                       chess.Move.from_uci(row['move']).to_square)
+        target_index = legal_moves.index(target_move)
+        target_index = torch.tensor(target_index, dtype=torch.long)
 
         # Board tensor
-        board_tensor = convert_board_to_tensor(row['fen'])
+        board_tensor = self.convert_board_to_tensor(fen)  # [6,8,8]
 
         # Extra features
-        extra_data = [
-            # process_eco_code(row['eco'], self.eco_to_idx),
-            process_date_played(row['date_played']),
-            process_move_number(row['move_no_pair_move']),
-            process_color(row['color_move']),
-            # process_count(row['white_count']),
-            # process_count(row['black_count'])
-        ]
+        extra_features = torch.tensor([
+            self.process_date_played(row['date_played']),
+            int(row['move_no_pair_move']),
+            0 if row['color_move'] == 'White' else 1
+        ], dtype=torch.float32)
 
-        input_data = expand_tensor(board_tensor, extra_data)
+        return {
+            "board": board_tensor,
+            "extra": extra_features,
+            "legal_moves": legal_moves_tensor,
+            "target_index": target_index
+        }
+    
+    def convert_board_to_tensor(self,board_fen):
+        pieces = ['p', 'r', 'n', 'b', 'q', 'k']
+        board = chess.Board(board_fen)
+        board_str = str(board).replace(' ','').replace('\n','')
+        layers = []
+        for piece in pieces:
+            arr = np.zeros((8,8), dtype=np.float32)
+            for i,char in enumerate(board_str):
+                row, col = divmod(i, 8)
+                if char == piece:
+                    arr[row, col] = -1
+                elif char == piece.upper():
+                    arr[row, col] = 1
+            layers.append(arr)
 
-        # Move tensors
-        from_layer, to_layer = convert_move_to_tensor(row['move'])
-        move_obj = chess.Move.from_uci(row['move'])
-        from_idx = move_obj.from_square  # 0-63
-        to_idx = move_obj.to_square      # 0-63
-
-        if self.use_output_tensors:
-            move_target = {
-                'from': torch.tensor(from_layer, dtype=torch.float),
-                'to': torch.tensor(to_layer, dtype=torch.float)
-            }
-
-        else:
-            move_target = (from_idx, to_idx)
-
-        return input_data, move_target
+        return torch.tensor(np.stack(layers), dtype=torch.float32)
+    
+    def process_date_played(self, date_played):
+        date_played = date_played.replace("??", "01")
+        dt = datetime.strptime(date_played, "%Y.%m.%d")
+        epoch = datetime(1970,1,1)
+        delta_days = (dt - epoch).days
+        return delta_days
         
 class module(nn.Module):
 
@@ -145,22 +171,52 @@ class module(nn.Module):
         self.bn1 = nn.BatchNorm2d(hidden_size)
         self.bn2 = nn.BatchNorm2d(hidden_size)
         self.activation1 = nn.ReLU()
+        
+        self.layers = nn.Sequential(self.conv1, self.bn1, self.activation1, self.conv2, self.bn2)
+
         self.activation2 = nn.ReLU()
 
     def forward(self, x):
         x_input = torch.clone(x)
-        x = self.conv1(x)        
-        x = self.bn1(x)
-        x = self.activation1(x)        
-        x = self.conv2(x)        
-        x = self.bn2(x)
+        x = self.layers(x)
         x = x + x_input
         x = self.activation2(x)
         return x        
 
 class NeuralNet(nn.Module):
+    '''
+    A convolutional neural network for predicting chess moves from a board tensor
+    and auxiliary (non-spatial) features.
+
+    The network processes a 6×8×8 input tensor representing piece placements across
+    six channels (e.g., piece-type × color planes). It applies an initial convolution,
+    a stack of residual blocks, then flattens the result and combines it with
+    additional non-board features. 
+    '''
+
     def __init__(self, hidden_layers=4, hidden_size=200, extra_feature_dim=3):
         super().__init__()
+        '''
+        Initialize the neural network.
+
+        Args:
+            hidden_layers (int):
+                Number of residual blocks applied after the initial convolution.
+            hidden_size (int):
+                Number of feature channels in the convolutional and residual layers.
+            extra_feature_dim (int):
+                Dimension of the auxiliary non-board input feature vector
+                (e.g., side-to-move, castling rights, move counters).
+
+        Components created:
+            • input_conv: first 3×3 convolution mapping 6 channels → hidden_size  
+            • bn_input: batch normalization for the input convolution  
+            • activation: shared ReLU activation  
+            • res_blocks: a Sequential container of `hidden_layers` residual blocks  
+            • flatten: flattens convolutional output to a vector  
+            • fc_extra: linear layer that embeds auxiliary features to 64 units  
+
+        '''
         self.input_conv = nn.Conv2d(6, hidden_size, kernel_size=3, padding=1)
         self.bn_input = nn.BatchNorm2d(hidden_size)
         self.activation = nn.ReLU()
@@ -170,27 +226,77 @@ class NeuralNet(nn.Module):
         )
 
         self.flatten = nn.Flatten()
-        self.fc_input_size = hidden_size * 8 * 8
-
-        self.fc_from = nn.Linear(self.fc_input_size + 64, 64)
-        self.fc_to = nn.Linear(self.fc_input_size + 64, 64)
         self.fc_extra = nn.Linear(extra_feature_dim, 64)
 
-    def forward(self, board_tensor, extra_features):
+    def forward(self, board_tensor, extra_features, legal_moves):
+        '''
+        Run a forward pass of the network.
+
+        Args:
+            board_tensor (Tensor):
+                A float tensor of shape (batch_size, 6, 8, 8) representing the chess
+                board. Each of the 6 channels typically encodes a piece type and color
+                (e.g., white pawns, white pieces, black pawns, …).
+
+            extra_features (Tensor):
+                A tensor of shape (batch_size, extra_feature_dim) containing
+                side-information not encoded spatially (e.g., castling rights,
+                fifty-move counter, who's to move).
+                
+            legal_moves (Tensor): 
+                A tensor of legal moves with square index coordinates
+        Returns:
+
+        '''
         x = self.input_conv(board_tensor)
         x = self.bn_input(x)
         x = self.activation(x)
-
         x = self.res_blocks(x)
         x = self.flatten(x)
 
-        extra_features = self.fc_extra(extra_features)
-        extra_features = self.activation(extra_features)
+        x_extra = self.fc_extra(extra_features)
+        x_extra = self.activation(x_extra)
 
         # concatenate extra features
-        x = torch.cat([x, extra_features], dim=1)
+        x = torch.cat([x, x_extra], dim=1)
 
-        from_logits = self.fc_from(x)
-        to_logits = self.fc_to(x)
+        return 
 
-        return from_logits, to_logits
+    
+class ChessMoveSelector(nn.Module):
+    def __init__(self, num_extra_features=3, board_embed_dim=256, move_embed_dim=128):
+        super().__init__()
+        # CNN for board
+        self.cnn = nn.Sequential(
+            nn.Conv2d(6,32,3,padding=1), nn.ReLU(),
+            nn.Conv2d(32,64,3,padding=1), nn.ReLU(),
+            nn.Flatten(),
+            nn.Linear(64*8*8, board_embed_dim), nn.ReLU()
+        )
+        self.extra_fc = nn.Linear(num_extra_features, board_embed_dim)
+        self.move_fc = nn.Linear(2, move_embed_dim)
+        self.combine_fc = nn.Linear(board_embed_dim + move_embed_dim, 1)
+
+    def forward(self, board, extra, legal_moves_list):
+        """
+        board: [B,6,8,8]
+        extra: [B,num_extra]
+        legal_moves_list: list of length B, each [N_i,2]
+        """
+        B = board.size(0)
+        scores_list = []
+
+        board_emb = self.cnn(board)
+        extra_emb = self.extra_fc(extra)
+        board_emb = board_emb + extra_emb  # [B, board_embed_dim]
+
+        for i in range(B):
+            moves = legal_moves_list[i]           # [N_i,2]
+            move_emb = self.move_fc(moves.float())  # [N_i, move_embed_dim]
+            b_emb = board_emb[i].unsqueeze(0).expand(move_emb.size(0), -1)
+            combined = torch.cat([b_emb, move_emb], dim=1)
+            score = self.combine_fc(combined).squeeze(1)  # [N_i]
+            probs = F.softmax(score, dim=0)               # softmax over legal moves
+            scores_list.append(probs)
+
+        return scores_list

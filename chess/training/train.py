@@ -3,7 +3,7 @@ import os
 
 sys.path.append("/home/matth/Desktop/Colossus/Software/chess/chess")
 
-from data.compile_data import NeuralNet, ChessDataset, Load_player_data, convert_board_to_tensor
+from neural_net import NeuralNet, ChessDataset, convert_board_to_tensor,Load_player_data
 from visualize import visualize_model_weights_and_graph, plot_heatmap, plot_histogram
 
 import chess
@@ -13,10 +13,11 @@ import torch.nn as nn
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-magnus_data = Load_player_data('Carlsen', 
-                 'game_data/Carlsen, Magnus/Carlsen_moves.csv', 
-                 'game_data/Carlsen, Magnus/Carlsen_game_info.csv', 
-                 'game_data/Carlsen, Magnus/eco_codes.csv')
+# magnus_data = Load_player_data('Carlsen', 
+#                  '/home/matth/Desktop/Colossus/Software/chess/chess/data/game_data/Carlsen, Magnus/Carlsen_moves.csv', 
+#                  '/home/matth/Desktop/Colossus/Software/chess/chess/data/game_data/Carlsen, Magnus/Carlsen_game_info.csv', 
+#                  '/home/matth/Desktop/Colossus/Software/chess/chess/data/game_data/Carlsen, Magnus/eco_codes.csv')
+
 foldername = 'magnus_120'
 
 # Predict move function
@@ -67,7 +68,7 @@ def sample_predict_and_plot(model, device, modelname):
     plot_heatmap(from_probs, 'from probs', f'figures/{modelname}/From_heat')
     plot_heatmap(to_probs, 'to probs', f'figures/{modelname}/To_heat')
 
-def train_model(model, num_epochs, modelname, dataset, plot=True):
+def train_model(num_epochs, modelname, dataset, plot=True):
     data_train = ChessDataset(dataset)
     data_train_loader = DataLoader(data_train, batch_size=128, shuffle=True, 
                                 drop_last=True, num_workers=4, pin_memory=True)
@@ -120,8 +121,46 @@ def train_model(model, num_epochs, modelname, dataset, plot=True):
     plt.savefig(f"figures/{modelname}/Losses.png")
     plt.show()
 
+def train_model2(model, dataset, num_epochs=100, batch_size=32, lr=1e-3):
+    data_train = ChessDataset(dataset)
+    data_loader = DataLoader(data_train, batch_size=batch_size, shuffle=True, collate_fn=lambda x: x)
+    model = NeuralNet()
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+    model.train()
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    model.to(device)
+
+    for epoch in range(num_epochs):
+        running_loss = 0.0
+        for batch in data_loader:
+            # batch is a list of dicts because legal_moves are variable-length
+            optimizer.zero_grad()
+
+            # Stack the tensors by batch size
+            board = torch.stack([item['board'] for item in batch]).to(device)
+            extra = torch.stack([item['extra'] for item in batch]).to(device)
+            legal_moves_list = [item['legal_moves'].to(device) for item in batch]
+            target_indices = [item['target_index'].to(device) for item in batch]
+
+            outputs = model(board, extra, legal_moves_list)  # list of [N_i] probabilities
+
+            # Compute negative log-likelihood loss
+            loss = 0.0
+            for probs, target_idx in zip(outputs, target_indices):
+                loss += -torch.log(probs[target_idx])
+            loss = loss / len(batch)
+
+            loss.backward()
+            optimizer.step()
+            running_loss += loss.item()
+
+        print(f"Epoch {epoch+1}, Loss: {running_loss/len(data_loader):.4f}")
+        torch.save(model.state_dict(), f'models/{modelname}.pth')
+
 def visualize_trained_model(model, device, modelname):   
     model.load_state_dict(torch.load(f'models/{modelname}.pth', map_location=device))
     model.eval()
     visualize_model_weights_and_graph(f'models/{modelname}.pth', f'figures/{modelname}' )
     sample_predict_and_plot(model, device)
+
+train_model2()
