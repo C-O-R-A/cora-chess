@@ -2,3 +2,4 @@
 .vscode
 .pytest_cache
 chess/data/game_data
+chess/training/loaded_data
