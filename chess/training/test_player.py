@@ -1,15 +1,9 @@
 import chess
 import torch
-from neural_net import NeuralNet
-from train_Magnus import predict_move
 import time
 from itertools import zip_longest
 import matplotlib.pyplot as plt
 import random
-
-# Accumulate turn-by-turn illegal moves
-def sum_turnwise(a, b):
-    return [x + y for x, y in zip_longest(a, b, fillvalue=0)]
 
 # Load your trained model
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
