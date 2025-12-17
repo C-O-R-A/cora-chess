@@ -1,7 +1,7 @@
 
 # Cobot chess
 
-Chess applicaition of the Colossus cobot arm. It uses monocular computer vision to localize the chessboard w.r.t. itself. The chess engine uses a cnn to rank all possible legal moves and chooses to play the move ranked the highest. Each 'agent' has been trained and biased towards the moves of a single player respectively. Then, based on the transforms between the chessboard and the robot end effector, a pick and place command is sent to the robot using its ethernet sdk to make its move on the physical chessboard.
+Chess applicaition of the CORA cobot arm. It uses monocular computer vision to localize the chessboard w.r.t. itself. The chess engine uses a cnn to rank all possible legal moves and chooses to play the move ranked the highest. Each 'agent' has been trained and biased towards the moves of a single player respectively. Then, based on the transforms between the chessboard and the robot end effector, a pick and place command is sent to the robot using its ethernet sdk to make its move on the physical chessboard.
 
 ---
 
