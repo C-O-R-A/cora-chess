@@ -8,5 +8,6 @@ kagglehub
 seaborn
 torchviz
 pandas
-chess-pygame
-git+https://github.com/machine0herald/CoDI.git@main
+scikit-learn
+ipympl
+git+https://github.com/C-O-R-A/CoDI.git
