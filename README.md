@@ -101,8 +101,12 @@ $${
 }$$
 
 where  
-${^{A}\mathbf{R}_{B} \in \mathrm{SO}(3) }$ is a rotation matrix and  
-${^{A}\mathbf{p}_{B} \in \mathbb{R}^3 }$ is a translation vector.
+${
+    {}^{A}\mathbf{R}_{B} \in \mathrm{SO}(3) 
+}$ is a rotation matrix and,  
+${
+    {}^{A}\mathbf{p}_{B} \in \mathbb{R}^3 
+}$ is a translation vector.
 
 ---
 
@@ -111,7 +115,9 @@ ${^{A}\mathbf{p}_{B} \in \mathbb{R}^3 }$ is a translation vector.
 The pose of the chessboard in the world frame is obtained via composition in
 ${\mathrm{SE}(3)}$:
 
-${^{W}\mathbf{T}_{B}={}^{W}\mathbf{T}_{C}\,{}^{C}\mathbf{T}_{B}}$
+$${
+    {}^{W}\mathbf{T}_{B}={}^{W}\mathbf{T}_{C}\,{}^{C}\mathbf{T}_{B}
+}$$
 
 The camera-to-board transform is computed from the detected fiducial markers:
 
