@@ -1,28 +1,24 @@
-## Coordinate Frames
+## Transforms
 
 ![Triads](assets/Transforms.png)
 
 We define the following coordinate frames:
 
-### Robot Frames
+#### Robot Frames
 - ${\mathcal{F}_W }$: World (robot base) frame  
 - ${\mathcal{F}_C}$ : Camera frame  
 - ${\mathcal{F}_G}$ : Gripper (end-effector) frame  
 
-### Environment Frames
+#### Environment Frames
 - ${\mathcal{F}_{M_i}, i \in \{1,2,3,4\}}$: Fiducial marker frames  
 - ${\mathcal{F}_{B}}$: Chessboard origin frame  
 
----
+#### Notation
 
-## SE(3) Transform Notation
-
-A rigid-body transform from frame ${\mathcal{F}_A }$ to ${\mathcal{F}_B }$ is written as
+A rigid-body transform from frame ${\mathcal{F}_W }$ to ${\mathcal{F}_{B_O} }$ is written as
 
 $${
-    ^WT_{B_O} = \begin{bmatrix} {^W\mathbf{R}_{B_O}} & {^W\mathbf{p}_{B_O}} \\\ 0 & 1 \end{bmatrix} = {^W\mathbf{T}_{C}} {^C\mathbf{T}_{B_O}} \
-    {^C\mathbf{T}_{B_O}} = {^C\mathbf{T}_{M_i}} \space {^{M_i}\mathbf{T}_{B_O}} \qquad 1 \le i \le 4 \
-    \\
+    ^WT_{B_O} = \begin{bmatrix} {^W\mathbf{R}_{B_O}} & {^W\mathbf{p}_{B_O}} \\\ 0 & 1 \end{bmatrix}
 }$$
 
 where  
@@ -35,33 +31,34 @@ $${
 
 ---
 
-## Transform Chain
+## Transform Chains
 
+#### Camera to Board Origin
 The pose of the chessboard in the world frame is obtained via composition in
 ${\mathrm{SE}(3)}$:
 
 $${
-    {}^{W}\mathbf{T}_{B}={}^{W}\mathbf{T}_{C}\,{}^{C}\mathbf{T}_{B}
+    {}^{W}\mathbf{T}_{B_O}={}^{W}\mathbf{T}_{C}\,{}^{C}\mathbf{T}_{B_O}
 }$$
 
 The camera-to-board transform is computed from the detected fiducial markers:
 
 $${
-    {}^{C}\mathbf{T}_{B}={}^{C}\mathbf{T}_{M_i}\,{}^{M_i}\mathbf{T}_{B},\qquad i \in \{1,2,3,4\}.
+    {}^{C}\mathbf{T}_{B_O}={}^{C}\mathbf{T}_{M_i}\,{}^{M_i}\mathbf{T}_{B_O},\qquad i \in \{1,2,3,4\}.
 }$$
 
----
-
-## Board Origin Offset
+#### Marker Offset
 
 The chessboard origin is defined relative to marker ${M_1 }$ by a fixed translation
 
 $${
-    {}^{M_1}\mathbf{p}_{B}=\begin{bmatrix}t \\\ t \\\ 0 \end{bmatrix},
+    {}^{M_1}\mathbf{p}_{B_O}=\begin{bmatrix}t \\\ t \\\ 0 \end{bmatrix},
 }$$
 
 yielding the homogeneous transform
 
 $${
-    {}^{M_1}\mathbf{T}_{B}=\begin{bmatrix} \mathbf{I}_{3 \times 3} & \begin{bmatrix} t \\\ t \\\ 0 \end{bmatrix} \\\ \mathbf{0}^{\mathsf{T}} & 1 \end{bmatrix}.
+    {}^{M_1}\mathbf{T}_{B_O}=\begin{bmatrix} \mathbf{I}_{3 \times 3} & \begin{bmatrix} t \\\ t \\\ 0 \end{bmatrix} \\\ \mathbf{0}^{\mathsf{T}} & 1 \end{bmatrix}.
 }$$
+
+#### Static Gripper Transform
