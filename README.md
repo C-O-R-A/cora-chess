@@ -1,121 +1,206 @@
+# Cobot Chess
 
-# Cobot chess
+Chess application for the **CORA cobot arm**.  
+The system uses **monocular computer vision** to estimate rigid-body transforms in
+\( \mathrm{SE}(3) \) between the robot, camera, fiducial markers, and a physical chessboard.
+A **CNN-based chess engine** selects moves, which are executed via pick-and-place
+motions using the robot’s Ethernet SDK.
 
-Chess applicaition of the CORA cobot arm. It uses monocular computer vision to localize the chessboard w.r.t. itself. The chess engine uses a cnn to rank all possible legal moves and chooses to play the move ranked the highest. Each 'agent' has been trained and biased towards the moves of a single player respectively. Then, based on the transforms between the chessboard and the robot end effector, a pick and place command is sent to the robot using its ethernet sdk to make its move on the physical chessboard.
+Each agent is trained and biased toward the move distribution of a single human
+player.
 
 ---
 
 ## Project Structure
 
-```bash
-assets/
-chess/
-tfs/
-vision/
-main.py
-tests/
-pyproject.toml
-requirements.txt
-```
+    assets/
+    chess/
+    tfs/
+    vision/
+    main.py
+    tests/
+    pyproject.toml
+    requirements.txt
 
 ---
 
 ## Installation
 
-### Clone directly from GitHub
+### Clone the Repository
 
-```bash
-git clone <url> >> <your directory>
-
-```
+    git clone <url> <your-directory>
+    cd <your-directory>
 
 ### Install Dependencies
-```bash
-pip install -r requirements.txt
-```
+
+    pip install -r requirements.txt
 
 ---
 
 ## Dependencies
 
-* `numpy`
-* `chess`
-* `codi` (networking sdk)
-* `torch`
-* `pandas`
-* `seaborn`
+- `numpy`
+- `chess`
+- `codi` (networking SDK)
+- `torch`
+- `pandas`
+- `seaborn`
 
-All will be installed automatically when installing via requirements.txt.
+All dependencies are installed automatically when using `requirements.txt`.
 
 ---
+
 ## Vision and Perception
-This section covers the vision and perception pipelines used for detecting the board and square positions as well as the moves made by the opponent.
 
-### Camera Calibration
+This section describes the perception pipeline for estimating camera pose,
+board pose, and opponent moves using rigid-body transforms in
+\( \mathrm{SE}(3) \).
 
-```python 
-from vision import camera_calibration
+---
 
-# Use camera 0 and use the checkerboard
-camera_calibration(0, use_checkerboard=True)
-```
+## Camera Calibration
 
+    from vision import camera_calibration
 
-### Marker Placement
+    # Use camera 0 with a checkerboard pattern
+    camera_calibration(0, use_checkerboard=True)
+
+---
+
+## Marker Placement
 
 ![Board](assets/board.png)
 
+---
 
+## Coordinate Frames
 
-
-### Transforms
 ![Triads](assets/Transforms.png)
-For this application we assign three triads to the robot ($W, C, G$) and five 
-to the the markers and boad respectively ($M_{1,2,3,4}, B_O$). 
 
+We define the following coordinate frames:
+
+### Robot Frames
+- \( \mathcal{F}_W \): World (robot base) frame  
+- \( \mathcal{F}_C \): Camera frame  
+- \( \mathcal{F}_G \): Gripper (end-effector) frame  
+
+### Environment Frames
+- \( \mathcal{F}_{M_i} \), \( i \in \{1,2,3,4\} \): Fiducial marker frames  
+- \( \mathcal{F}_{B} \): Chessboard origin frame  
+
+---
+
+## SE(3) Transform Notation
+
+A rigid-body transform from frame \( \mathcal{F}_A \) to \( \mathcal{F}_B \) is written as
+
+\(
+    ^WT_{B_O} = \begin{bmatrix} {^WR_{B_O}} & {^W\vec{r}_{B_O}} \\\ 0 & 1 \end{bmatrix} = {^WT_{C}} {^CT_{B_O}} 
+    \\[1em] {^CT_{B_O}} = {^CT_{M_i}} \space {^{M_i}T_{B_O}} \qquad 1 \le i \le 4 
+    \\[1em] 
+\)
+
+where  
+\( {}^{A}\mathbf{R}_{B} \in \mathrm{SO}(3) \) is a rotation matrix and  
+\( {}^{A}\mathbf{p}_{B} \in \mathbb{R}^3 \) is a translation vector.
+
+---
+
+## Transform Chain
+
+The pose of the chessboard in the world frame is obtained via composition in
+\( \mathrm{SE}(3) \):
 
 $$
-\begin{aligned}
-{}^{W}T_{B_O}
-&=
+{}^{W}\mathbf{T}_{B}
+=
+{}^{W}\mathbf{T}_{C}\,
+{}^{C}\mathbf{T}_{B}.
+$$
+
+The camera-to-board transform is computed from the detected fiducial markers:
+
+$$
+{}^{C}\mathbf{T}_{B}
+=
+{}^{C}\mathbf{T}_{M_i}\,
+{}^{M_i}\mathbf{T}_{B},
+\qquad
+i \in \{1,2,3,4\}.
+$$
+
+---
+
+## Board Origin Offset
+
+The chessboard origin is defined relative to marker \( M_1 \) by a fixed translation
+
+$$
+{}^{M_1}\mathbf{p}_{B}
+=
 \begin{bmatrix}
-{}^{W}R_{B_O} & {}^{W}\vec{r}_{B_O} \\
-0 & 1
-\end{bmatrix} \\
-&=
-{}^{W}T_{C}\, {}^{C}T_{B_O}
-\end{aligned}
+t \\
+t \\
+0
+\end{bmatrix},
 $$
 
+yielding the homogeneous transform
+
 $$
-{}^{C}T_{B_O}
+{}^{M_1}\mathbf{T}_{B}
 =
-{}^{C}T_{M_i}\, {}^{M_i}T_{B_O}
-\qquad 1 \le i \le 4
-$$
-
-And with
-
-$$
-{}^{M_1}\vec{r}_{B_O}
-=
+\begin{bmatrix}
+\mathbf{I}_{3 \times 3} &
 \begin{bmatrix}
 t \\ t \\ 0
-\end{bmatrix}
+\end{bmatrix} \\
+\mathbf{0}^{\mathsf{T}} & 1
+\end{bmatrix}.
 $$
 
+---
+
+## Motion Execution
+
+Given a desired square location expressed in \( \mathcal{F}_B \), the target gripper
+pose in the world frame is computed via
+
 $$
-{}^{M_1}T_{B_O}
+{}^{W}\mathbf{T}_{G}
 =
-\begin{bmatrix}
-0 & 0 & 0 & t \\
-0 & 0 & 0 & t \\
-0 & 0 & 0 & 0 \\
-0 & 0 & 0 & 1
-\end{bmatrix}
+{}^{W}\mathbf{T}_{B}\,
+{}^{B}\mathbf{T}_{G},
 $$
 
+and sent to the robot controller as a Cartesian pick-and-place command.
+
 ---
-### Basic Usage
+
+## Basic Usage
+
+    python main.py
+
+The system will:
+
+1. Detect fiducial markers and the chessboard
+2. Estimate all required \( \mathrm{SE}(3) \) transforms
+3. Observe the opponent’s move
+4. Select a move using the CNN-based engine
+5. Execute the move using the robot arm
+
 ---
-### Playing a match
+
+## Playing a Match
+
+Ensure that:
+
+- The camera is calibrated
+- All fiducial markers are visible
+- The chessboard lies within the robot’s reachable workspace
+
+Once running, the robot alternates turns with the human opponent and physically
+moves the chess pieces on the board.
+
+
+
