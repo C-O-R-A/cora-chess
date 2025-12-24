@@ -95,9 +95,9 @@ We define the following coordinate frames:
 A rigid-body transform from frame ${\mathcal{F}_A }$ to ${\mathcal{F}_B }$ is written as
 
 $${
-    ^WT_{B_O} = \begin{bmatrix} {^WR_{B_O}} & {^W\vec{r}_{B_O}} \\\ 0 & 1 \end{bmatrix} = {^WT_{C}} {^CT_{B_O}} 
-    \\[1em] {^CT_{B_O}} = {^CT_{M_i}} \space {^{M_i}T_{B_O}} \qquad 1 \le i \le 4 
-    \\[1em] 
+    ^WT_{B_O} = \begin{bmatrix} {^WR_{B_O}} & {^W\vec{r}_{B_O}} \\\ 0 & 1 \end{bmatrix} = {^WT_{C}} {^CT_{B_O}} \
+    {^CT_{B_O}} = {^CT_{M_i}} \space {^{M_i}T_{B_O}} \qquad 1 \le i \le 4 \
+    \\
 }$$
 
 where  
@@ -126,13 +126,13 @@ $${
 The chessboard origin is defined relative to marker ${M_1 }$ by a fixed translation
 
 $${
-    {}^{M_1}\mathbf{p}_{B}=\begin{bmatrix}t \\ t \\ 0 \end{bmatrix},
+    {}^{M_1}\mathbf{p}_{B}=\begin{bmatrix}t \\\ t \\\ 0 \end{bmatrix},
 }$$
 
 yielding the homogeneous transform
 
 $${
-    {}^{M_1}\mathbf{T}_{B}=\begin{bmatrix} \mathbf{I}_{3 \times 3} & \begin{bmatrix} t \\ t \\ 0 \end{bmatrix} \\ \mathbf{0}^{\mathsf{T}} & 1 \end{bmatrix}.
+    {}^{M_1}\mathbf{T}_{B}=\begin{bmatrix} \mathbf{I}_{3 \times 3} & \begin{bmatrix} t \\\ t \\\ 0 \end{bmatrix} \\\ \mathbf{0}^{\mathsf{T}} & 1 \end{bmatrix}.
 }$$
 
 ---
