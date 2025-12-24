@@ -13,7 +13,7 @@ We define the following coordinate frames:
 - ${\mathcal{F}_{M_i}, i \in \{1,2,3,4\}}$: Fiducial marker frames  
 - ${\mathcal{F}_{B_O}}$: Chessboard origin frame  
 
-#### Notation
+<!-- #### Notation
 
 A rigid-body transform from frame ${\mathcal{F}_W }$ to ${\mathcal{F}_{B_O}}$ is written as
 
@@ -27,7 +27,7 @@ $${
 }$$ is a rotation matrix and,  
 $${
     {}^W{\mathbf{p}}_{B_O} \in \mathbb{R}^3 
-}$$ is a translation vector.
+}$$ is a translation vector. -->
 
 ---
 
