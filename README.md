@@ -81,7 +81,7 @@ We define the following coordinate frames:
 
 ### Robot Frames
 - ${\mathcal{F}_W }$: World (robot base) frame  
-- ${\mathcal{F}_C}$ : Camera frame  
+- ${\mathfrak{F}_C}$ : Camera frame  
 - ${\mathcal{F}_G}$ : Gripper (end-effector) frame  
 
 ### Environment Frames
