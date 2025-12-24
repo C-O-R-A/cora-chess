@@ -94,11 +94,9 @@ We define the following coordinate frames:
 
 A rigid-body transform from frame ${\mathcal{F}_A }$ to ${\mathcal{F}_B }$ is written as
 
-${
-    ^WT_{B_O} = \begin{bmatrix} {^WR_{B_O}} & {^W\vec{r}_{B_O}} \\\ 0 & 1 \end{bmatrix} = {^WT_{C}} {^CT_{B_O}} 
+${^WT_{B_O} = \begin{bmatrix} {^WR_{B_O}} & {^W\vec{r}_{B_O}} \\\ 0 & 1 \end{bmatrix} = {^WT_{C}} {^CT_{B_O}} 
     \\[1em] {^CT_{B_O}} = {^CT_{M_i}} \space {^{M_i}T_{B_O}} \qquad 1 \le i \le 4 
-    \\[1em] 
-}$
+    \\[1em]}$
 
 where  
 ${{}^{A}\mathbf{R}_{B} \in \mathrm{SO}(3) }$ is a rotation matrix and  
