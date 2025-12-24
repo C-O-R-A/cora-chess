@@ -101,12 +101,12 @@ $${
 }$$
 
 where  
-${
+$${
     {}^{A}\mathbf{R}_{B} \in \mathrm{SO}(3) 
-}$ is a rotation matrix and,  
-${
+}$$ is a rotation matrix and,  
+$${
     {}^{A}\mathbf{p}_{B} \in \mathbb{R}^3 
-}$ is a translation vector.
+}$$ is a translation vector.
 
 ---
 
