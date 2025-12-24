@@ -125,7 +125,7 @@ $${
 
 The chessboard origin is defined relative to marker ${M_1 }$ by a fixed translation
 
-$$${
+$${
     {}^{M_1}\mathbf{p}_{B}=\begin{bmatrix}t \\ t \\ 0 \end{bmatrix},
 }$$
 
