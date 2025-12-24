@@ -15,19 +15,19 @@ We define the following coordinate frames:
 
 #### Notation
 
-A rigid-body transform from frame ${\mathcal{F}_W }$ to ${\mathcal{F}_{B_O} }$ is written as
+A rigid-body transform from frame ${{\mathcal{F}}_{W} }$ to ${{\mathcal{F}}_{B_O} }$ is written as
 
 $${
-    ^WT_{B_O} = \begin{bmatrix} {^W\mathbf{R}_{B_O}} & {^W\mathbf{p}_{B_O}} \\\ 0 & 1 \end{bmatrix}
+    ^W{T}_{B_O} = \begin{bmatrix} {^W{\mathbf{R}}_{B_O}} & {^W{\mathbf{p}}_{B_O}} \\\ 0 & 1 \end{bmatrix}
 }$$
 
 where  
-$$
-    {}^W\mathbf{R}_{B_O} \in \mathrm{SO}(3) 
-$$ is a rotation matrix and,  
-$$
-    {}^W\mathbf{p}_{B_O} \in \mathbb{R}^3 
-$$ is a translation vector.
+$${
+    {}^W{\mathbf{R}}_{B_O} \in \mathrm{SO}(3) 
+}$$ is a rotation matrix and,  
+$${
+    {}^W{\mathbf{p}}_{B_O} \in \mathbb{R}^3 
+}$$ is a translation vector.
 
 ---
 
