@@ -71,18 +71,49 @@ camera_calibration(0, use_checkerboard=True)
 ### Transforms
 ![Triads](assets/Transforms.png)
 For this application we assign three triads to the robot ($W, C, G$) and five 
-to the the markers and boad respectively ($M_{1,2,3,4}, B_O$). From these definitions the following transforms apply:
+to the the markers and boad respectively ($M_{1,2,3,4}, B_O$). 
 
-$
-^WT_{B_O} = \begin{bmatrix} {^WR_{B_O}} & {^W\vec{r}_{B_O}} \\\ 0 & 1 \end{bmatrix} =  {^WT_{C}}  {^CT_{B_O}} \\[1em]
-{^CT_{B_O}} = {^CT_{M_i}} \space {^{M_i}T_{B_O}} \qquad 1 \le i \le 4 \\[1em]
-$
 
-And with $^{M_1}\vec{r}_{B_O} = \begin{bmatrix} {t} \\\ {t} \\\ {0} \end{bmatrix}$,
+$$
+\begin{aligned}
+{}^{W}T_{B_O}
+&=
+\begin{bmatrix}
+{}^{W}R_{B_O} & {}^{W}\vec{r}_{B_O} \\
+0 & 1
+\end{bmatrix} \\
+&=
+{}^{W}T_{C}\, {}^{C}T_{B_O}
+\end{aligned}
+$$
 
-$
-{^{M_1}T_{B_O}} = \begin{bmatrix} {0} & 0 & 0 & t \\\ 0 & 0 & 0 & t \\\ 0 & 0 & 0 & 0 \\\ 0 & 0 & 0 & 1\end{bmatrix}
-$
+$$
+{}^{C}T_{B_O}
+=
+{}^{C}T_{M_i}\, {}^{M_i}T_{B_O}
+\qquad 1 \le i \le 4
+$$
+
+And with
+
+$$
+{}^{M_1}\vec{r}_{B_O}
+=
+\begin{bmatrix}
+t \\ t \\ 0
+\end{bmatrix}
+$$
+
+$$
+{}^{M_1}T_{B_O}
+=
+\begin{bmatrix}
+0 & 0 & 0 & t \\
+0 & 0 & 0 & t \\
+0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 1
+\end{bmatrix}
+$$
 
 ---
 ### Basic Usage
