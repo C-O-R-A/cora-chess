@@ -69,6 +69,8 @@ board pose, and opponent moves using rigid-body transforms in
 
 ## Marker Placement
 
+$`\sqrt{3}`$
+
 ![Board](assets/board.png)
 
 ---
