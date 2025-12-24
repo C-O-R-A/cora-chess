@@ -11,11 +11,11 @@ We define the following coordinate frames:
 
 #### Environment Frames
 - ${\mathcal{F}_{M_i}, i \in \{1,2,3,4\}}$: Fiducial marker frames  
-- ${\mathcal{F}_{B}}$: Chessboard origin frame  
+- ${\mathcal{F}_{B_O}}$: Chessboard origin frame  
 
 #### Notation
 
-A rigid-body transform from frame ${{\mathcal{F}}_{W} }$ to ${{\mathcal{F}}_{B_O} }$ is written as
+A rigid-body transform from frame ${\mathcal{F}_W }$ to ${\mathcal{F}_{B_O}}$ is written as
 
 $${
     ^W{T}_{B_O} = \begin{bmatrix} {^W{\mathbf{R}}_{B_O}} & {^W{\mathbf{p}}_{B_O}} \\\ 0 & 1 \end{bmatrix}
