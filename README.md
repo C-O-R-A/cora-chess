@@ -10,16 +10,10 @@ Chess applicaition of the CORA cobot arm. It uses monocular computer vision to l
 ```bash
 assets/
 chess/
-    agents/
-    data/
-    markers/
-    models/
-    training/
-    agents.py
-    main.py/
-    transforms.py/
-    vision.py/
-test/
+tfs/
+vision/
+main.py
+tests/
 pyproject.toml
 requirements.txt
 ```
@@ -54,9 +48,7 @@ pip install -r requirements.txt
 All will be installed automatically when installing via requirements.txt.
 
 ---
-
-## Basic Usage
-
+## Vision and Perception
 ### Camera Calibration
 
 ```python 
@@ -69,7 +61,15 @@ camera_calibration(0, use_checkerboard=True)
 
 ### Marker Placement
 
-![Colossus Logo](assets/board.png)
+![Board](assets/board.png)
 
 
+This section covers the vision and perception pipelines used for detecting the board and square positions and moves made by the opponent
+
+#### Triad naming conventions
+![Triads](assets/Transforms.png)
+
+---
+### Basic Usage
+---
 ### Playing a match

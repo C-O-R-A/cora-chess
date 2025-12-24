@@ -4,7 +4,10 @@ import chess
 import numpy as np
 import codi
 
-def TF(pos_vec, rot_vec):
+def TF(pose):
+    pos_vec = pose[0]
+    rot_vec = pose[1]
+
     # Creat a 4x4 transformation matrix from position and rotation vectors
     TF =  np.zeros((4,4))
     C_x = np.cos(rot_vec[0]) # Cos x
@@ -41,13 +44,14 @@ def sq_to_board_coord(square):
     coord = [square // 8, square % 8, 0] # x,y,z relative to board origin
     return coord
 
-async def move_to_square(target_sq, height, board, robot_client, print_status=False):
+async def move_to_square(target_sq, approach_pose, board, robot_client, print_status=False):
     # convert move to board coordinates
     sq_coords = sq_to_board_coord(target_sq)
     pos = sq_coords * board.cell_size
-    pos[2] = height  # set z to height
     rot = [0,0,0] # board (and target square) rotation sq_r_b is zero (rotation wrt the body fixed frame is zero)
-    
+    piece_pose = np.array([pos, rot])
+
+
     # Compute square to board transformation matrix
     square_T_board = TF(pos, rot)
 
