@@ -22,12 +22,12 @@ $${
 }$$
 
 where  
-${
+$${
     {}^W\mathbf{R}_{B_O} \in \mathrm{SO}(3) 
-}$ is a rotation matrix and,  
-${
+}$$ is a rotation matrix and,  
+$${
     {}^W\mathbf{p}_{B_O} \in \mathbb{R}^3 
-}$ is a translation vector.
+}$$ is a translation vector.
 
 ---
 
