@@ -54,7 +54,7 @@ All dependencies are installed automatically when using `requirements.txt`.
 
 This section describes the perception pipeline for estimating camera pose,
 board pose, and opponent moves using rigid-body transforms in
-${\mathrm{SE}(3) $.
+${\mathrm{SE}(3) }$.
 
 ---
 
