@@ -46,6 +46,7 @@ class CaraChess:
     async def pick_and_place(self, move):
         from_sq, to_sq = move.from_square, move.to_square
         approach_pose = np.array([0.0, 0.0, 0.3], [0.0, 0.0, 0.0])
+        
         ## approach above piece at height of 30cm
         await tf.move_to_square(from_sq, approach_pose, self.board, self.robot_client, print_status=False)
 
