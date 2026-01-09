@@ -33,7 +33,7 @@ requirements.txt
 
 ### Clone the Repository
 ```bash
-git clone <url> <your-directory>
+git clone <https://github.com/C-O-R-A/cora-chess.git> <your-directory>
 cd <your-directory>
 ```
 ### Install Dependencies
