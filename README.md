@@ -1,4 +1,5 @@
 # Cobot Chess
+![Status](https://img.shields.io/badge/status-in%20progress-yellow)
 
 Chess application for the **CORA cobot arm**.  
 The system uses **monocular computer vision** to estimate rigid-body transforms in
@@ -9,31 +10,37 @@ motions using the robot’s Ethernet SDK.
 Each agent is trained and biased toward the move distribution of a single human
 player.
 
+
 ---
+
 
 ## Project Structure
 
-    assets/
-    chess/
-    tfs/
-    vision/
-    main.py
-    tests/
-    pyproject.toml
-    requirements.txt
+```bash
+assets/
+chess/
+tfs/
+vision/
+main.py
+tests/
+pyproject.toml
+requirements.txt
+```
 
 ---
 
 ## Installation
 
 ### Clone the Repository
-
-    git clone <url> <your-directory>
-    cd <your-directory>
-
+```bash
+git clone <url> <your-directory>
+cd <your-directory>
+```
 ### Install Dependencies
 
-    pip install -r requirements.txt
+```bash
+pip install -r requirements.txt
+```
 
 ---
 
@@ -46,7 +53,7 @@ player.
 - `pandas`
 - `seaborn`
 
-All dependencies are installed automatically when using `requirements.txt`.
+>All dependencies are installed automatically when using `requirements.txt`.
 
 ---
 
@@ -60,14 +67,18 @@ ${\mathrm{SE}(3) }$.
 
 ## Camera Calibration
 
-    from vision import camera_calibration
+```python
+from vision import camera_calibration
 
-    # Use camera 0 with a checkerboard pattern
-    camera_calibration(0, use_checkerboard=True)
+# Use camera 0 with a checkerboard pattern
+camera_calibration(0, use_checkerboard=True)
+```
 
 ---
 
 ## Marker Placement
+
+<img src="assets/Transforms.png">
 
 ![Board](assets/board.png)
 
@@ -75,7 +86,9 @@ ${\mathrm{SE}(3) }$.
 
 ## Basic Usage
 
-    python main.py
+```bash
+python3 main.py
+```
 
 The system will:
 
@@ -97,6 +110,8 @@ Ensure that:
 
 Once running, the robot alternates turns with the human opponent and physically
 moves the chess pieces on the board.
+
+---
 
 
 
