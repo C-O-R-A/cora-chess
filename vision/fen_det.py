@@ -1,4 +1,3 @@
-import os
 
 """
 Detects state of a board by tracking what square states have changed since last turn.
@@ -14,6 +13,8 @@ from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt
 from scipy.signal import find_peaks
 
+import os
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 def detect_markers(im, verbose=False, show=False) -> dict:
     """
@@ -184,7 +185,7 @@ def board_info(square_size, verbose=False) -> dict:
 
     return square_dict
 
-def noise_scores(im, square_size, verbose=False, plot=False) -> ndarray:
+def noise_scores(im, square_size, verbose=False, plot=False, folder=False) -> ndarray:
     """
     generate noise score for each
     square by looking at
@@ -237,27 +238,26 @@ def noise_scores(im, square_size, verbose=False, plot=False) -> ndarray:
         )
 
     if plot:
+        # Histogram plot
         plt.figure(figsize=(6,4))
         plt.hist(noise_scores, bins=20)
         plt.title("Noise Score Histogram")
         plt.xlabel("Variance")
         plt.ylabel("Frequency")
-        plt.show()
+        if folder:
+            plt.savefig(os.path.join(folder, 'Noise_score_hist.png'))
 
+        # K-Means plot
         plt.figure(figsize=(8, 2))
-
-        # Plot each square as a point
         plt.scatter(noise_scores, np.zeros_like(noise_scores),
                     c=labels, cmap='viridis', s=80)
-
-        # Plot cluster centers
         plt.scatter(centers, [0]*len(centers),
                     c='red', marker='x', s=200, linewidths=3)
-
         plt.yticks([])
         plt.xlabel("Noise Score (Variance)")
         plt.title("KMeans Clustering of Square Noise Scores")
-        plt.show()
+        if folder:
+            plt.savefig(os.path.join(folder, 'Noise_score_kmeans.png'))
 
     if verbose:
         print(f"Centers: {centers}")
@@ -306,7 +306,7 @@ def noise_scores(im, square_size, verbose=False, plot=False) -> ndarray:
     return board_dict, overlayed
 
 
-def detect_move(im1, im2, verbose=False, show=False, plot=False) -> str:
+def detect_move(im1, im2, verbose=False, show=False, plot=False, folder=False) -> str:
     """
     detects move by comparing two images of the board,
     before and after the opponent's move.
@@ -334,15 +334,16 @@ def detect_move(im1, im2, verbose=False, show=False, plot=False) -> str:
     if show:
         cv2.imshow("Flat Image 1", cropped_im_1)
         cv2.imshow("Flat Image 2", cropped_im_2)
+
         cv2.waitKey(0)
         cv2.destroyAllWindows()
 
-    square_dict_1, overlayed_im_1 = noise_scores(cropped_im_1, square_size, verbose=verbose, plot=plot)
-    square_dict_2, overlayed_im_2 = noise_scores(cropped_im_2, square_size, verbose=verbose, plot=plot)
+    square_dict_1, overlayed_im_1 = noise_scores(cropped_im_1, square_size, verbose=verbose, plot=plot, folder=folder)
+    square_dict_2, overlayed_im_2 = noise_scores(cropped_im_2, square_size, verbose=verbose, plot=plot, folder=folder)
 
     if show:
-        cv2.imshow("Overlayed image", overlayed_im_1)
-        cv2.imshow("Overlayed image", overlayed_im_2)
+        cv2.imshow("Overlayed image 1", overlayed_im_1)
+        cv2.imshow("Overlayed image 2", overlayed_im_2)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
     
@@ -357,13 +358,24 @@ def detect_move(im1, im2, verbose=False, show=False, plot=False) -> str:
     if verbose:
         print(move)
 
+    if folder:
+        cv2.imwrite(os.path.join(folder, 'cropped_image_1.png'), cropped_im_1)
+        cv2.imwrite(os.path.join(folder, 'cropped_image_2.png'), cropped_im_2)
+        cv2.imwrite(os.path.join(folder, 'persp_correct_image_1.png'), flat_im_1)
+        cv2.imwrite(os.path.join(folder, 'persp_correct_image_2.png'), flat_im_2)
+        cv2.imwrite(os.path.join(folder, 'overlayed_image_1.png'), overlayed_im_1)
+        cv2.imwrite(os.path.join(folder, 'overlayed_image_2.png'), overlayed_im_2)
+
+
     return move
 
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 images_path = os.path.join(BASE_DIR, "test_images")
 
 image_1_path = os.path.join(images_path, "test_1.png")
 image_2_path = os.path.join(images_path, "test_2.png")
 
-detect_move(cv2.imread(image_1_path), cv2.imread(image_2_path), verbose=True)
+detect_move(cv2.imread(image_1_path), cv2.imread(image_2_path), 
+            verbose=False, 
+            show=True, 
+            plot=True, folder=os.path.join(BASE_DIR, 'example_images'))
