@@ -10,4 +10,6 @@ torchviz
 pandas
 scikit-learn
 ipympl
+urdfpy
+"pyglet<2"
 git+https://github.com/C-O-R-A/CoDI.git

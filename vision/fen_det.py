@@ -1,0 +1,369 @@
+import os
+
+"""
+Detects state of a board by tracking what square states have changed since last turn.
+Also constructs board states from detected moves.
+Avoids checking if the board is partially occluded.
+"""
+
+import chess
+import cv2
+import numpy as np
+from numpy import ndarray
+from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
+from scipy.signal import find_peaks
+
+
+def detect_markers(im, verbose=False, show=False) -> dict:
+    """
+    Detects markers in an image of a chess board.
+    Returns a list of detected marker positions.
+    """
+    dictionary = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
+    detector = cv2.aruco.ArucoDetector(dictionary)
+    corners, ids, _ = detector.detectMarkers(im)
+
+    if verbose:
+        print("Detected marker corners:", corners)
+        print("Detected marker IDs:", ids)
+
+    marker_poses = {}
+
+    for i in range(len(corners)):
+        marker_id = ids[i][0]
+        marker_poses[f"marker_{marker_id}"] = corners[i]
+        if show:
+            # Draw the marker border
+            cv2.polylines(im, [corners[i].astype(int)], True, (0, 255, 0), 2)
+
+            # Label each corner
+            corner_labels = [
+                "TL",
+                "TR",
+                "BR",
+                "BL",
+            ]  # top-left, top-right, bottom-right, bottom-left
+            for j, pt in enumerate(corners[i][0]):
+                pt = tuple(pt.astype(int))
+                cv2.circle(im, pt, 5, (0, 0, 255), -1)  # draw small circle
+                cv2.putText(
+                    im,
+                    f"{corner_labels[j]}",
+                    (pt[0] + 5, pt[1] - 5),  # offset text a bit
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.5,
+                    (255, 0, 0),
+                    1,
+                    cv2.LINE_AA,
+                )
+
+    if show:
+        im_markers = cv2.aruco.drawDetectedMarkers(im.copy(), corners, ids)
+        cv2.imshow("Detected Markers", im_markers)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+    return marker_poses
+
+
+def perspective_correction(im, show=False) -> ndarray:
+    """
+    Perspective correction using detected markers to align the image of the chess board.
+    """
+    markers = detect_markers(im, show=show)
+    size = (1000, 1000)
+
+    corners_dst = np.array(
+        [[0, 0], [size[0] - 1, 0], [size[0] - 1, size[1] - 1], [0, size[1] - 1]],
+        dtype=np.float32,
+    )
+
+    corners = np.array(
+        [
+            markers["marker_1"][0][1],
+            markers["marker_2"][0][0],
+            markers["marker_3"][0][3],
+            markers["marker_4"][0][2],
+        ],
+        dtype=np.float32,
+    )
+
+    flat_im = cv2.warpPerspective(
+        im, cv2.getPerspectiveTransform(corners, corners_dst), size
+    )
+
+    if show:
+        cv2.imshow("Corrected", flat_im)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+
+    return flat_im
+
+
+def board_size_from_checkers(im, verbose=False, show=False) -> tuple:
+    """
+    Determines the size of the chess board in terms of number of squares.
+    This is done by using a checkerboard pattern detection algorithm to identify
+    the corners of the squares on the chessboard, and then counting the number
+    of squares along each dimension.
+    """
+    # Use OpenCV's checkerboard detection
+    ret, corners = cv2.findChessboardCorners(im, (3, 7), None)
+
+    # display corners for debugging
+    if ret:
+        im_corners = cv2.drawChessboardCorners(im.copy(), (3, 7), corners, ret)
+
+        if show:
+            cv2.imshow("Checkerboard Corners", im_corners)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
+
+        # Calculate square size
+        square_size_x = np.linalg.norm(corners[0] - corners[1])
+
+        if verbose:
+            print(corners)
+            print(f"Estimated square size: {square_size_x:.1f} pixels")
+            print(f"Estimated board size: {board_size:.1f} pixels")
+
+        board_size = 8 * square_size_x
+
+        return board_size, square_size_x
+    else:
+        print("Checkerboard corners not detected.")
+        return None
+
+def crop_img(im, size) -> ndarray:
+    """
+    Crops the image to just the board area by
+    finding the bounding box of the chessboard
+    in the flattened image.
+    """
+    cropped_img = im[
+        int(0.5 * im.shape[0] - size // 2) : int(
+            0.5 * im.shape[0] + size // 2
+        ),
+        int(0.5 * im.shape[1] - size // 2) : int(
+            0.5 * im.shape[1] + size // 2
+        ),
+    ]
+
+    return cropped_img
+
+
+def board_info(square_size, verbose=False) -> dict:
+    square_dict = {}
+
+    for i, square in enumerate(chess.SQUARE_NAMES):
+        square = chess.square_name(chess.square_mirror(chess.Square(i)))
+        row = i // 8
+        col = i % 8
+
+        x_l = col * square_size
+        x_u = (col + 1) * square_size
+        y_l = row * square_size
+        y_u = (row + 1) * square_size
+
+        _file = chess.square_file(i)
+        _rank = chess.square_rank(i)
+
+        square_dict[square] = {
+            "x_lower": x_l,
+            "x_upper": x_u,
+            "y_lower": y_l,
+            "y_upper": y_u,
+            "idx": i,
+            "occupied": False,
+            "noise_score": 0,
+            "color": 'white' if (_file + _rank) % 2 == 1 else  'black'
+        }
+
+    if verbose:
+        print(square_dict)
+
+    return square_dict
+
+def noise_scores(im, square_size, verbose=False, plot=False) -> ndarray:
+    """
+    generate noise score for each
+    square by looking at
+    the variance of pixel values
+    """
+    # TODO: The noise scores on each square fall into three buckets, 
+    #    1. occluded by white piece
+    #    2. occluded by black piece
+    #    3. empty
+    # our goal is to assign true to the occupied field for the first two cases.
+    # we cant simply do this with the median as this will 
+    # cause black squares occluded by black pieces to go unnoticed. 
+    # we need some other metric extracted from all the samples
+
+    if len(im.shape) == 2:
+        im = cv2.cvtColor(im, cv2.COLOR_GRAY2BGR)
+
+    board_dict = board_info(square_size, verbose=verbose)
+    noise_scores = []
+
+    for square, bounds in board_dict.items():
+        x_l = int(bounds["x_lower"])
+        x_u = int(bounds["x_upper"])
+        y_l = int(bounds["y_lower"])
+        y_u = int(bounds["y_upper"])
+
+        # Add inset to squares as edge misalignments may produce false positives
+        inset = 5
+
+        square_img = im[y_l+inset:y_u-inset, x_l+inset:x_u-inset]
+        noise_score = np.var(square_img)
+        board_dict[square]["noise_score"] = noise_score
+        noise_scores.append(noise_score)
+
+
+    # Determine median noise scores 
+    # for each type of piece occlusion
+    X = np.array(noise_scores).reshape(-1, 1)
+    kmeans = KMeans(n_clusters=3, random_state=0).fit(X)
+
+    labels = kmeans.labels_
+    centers = sorted(kmeans.cluster_centers_.flatten())
+    noise_threshold_black = centers[0]
+    noise_threshold_white = (centers[0] + centers[1]) / 2
+
+
+    for square in chess.SQUARE_NAMES:
+        board_dict[square]["occupied"] = (
+            board_dict[square]["noise_score"] > (noise_threshold_white if (board_dict[square]["color"] == 'white') else noise_threshold_black)
+        )
+
+    if plot:
+        plt.figure(figsize=(6,4))
+        plt.hist(noise_scores, bins=20)
+        plt.title("Noise Score Histogram")
+        plt.xlabel("Variance")
+        plt.ylabel("Frequency")
+        plt.show()
+
+        plt.figure(figsize=(8, 2))
+
+        # Plot each square as a point
+        plt.scatter(noise_scores, np.zeros_like(noise_scores),
+                    c=labels, cmap='viridis', s=80)
+
+        # Plot cluster centers
+        plt.scatter(centers, [0]*len(centers),
+                    c='red', marker='x', s=200, linewidths=3)
+
+        plt.yticks([])
+        plt.xlabel("Noise Score (Variance)")
+        plt.title("KMeans Clustering of Square Noise Scores")
+        plt.show()
+
+    if verbose:
+        print(f"Centers: {centers}")
+        print("Noise scores for each square:")
+        for square, score in zip(chess.SQUARES, noise_scores):
+            print(f"{square}: {score:.2f} \n")
+        print("Square dict: \n")
+        print(f"{board_dict}")
+
+    
+    # Overlay green cast on top of occupied squares
+    overlay = im.copy()
+
+
+    for square, info in board_dict.items():
+        x_l = int(info["x_lower"])
+        x_u = int(info["x_upper"])
+        y_l = int(info["y_lower"])
+        y_u = int(info["y_upper"])
+
+        # Color occupied squares
+        if info["occupied"]:
+            overlay[y_l:y_u, x_l:x_u] = (0, 255, 0)
+
+        # ---- ADD TEXT LABEL ----
+        text = info["color"]  # "white" or "black"
+
+        # Position text in center of square
+        center_x = int((x_l + x_u) / 2)
+        center_y = int((y_l + y_u) / 2)
+
+        cv2.putText(
+            overlay,
+            text,
+            (center_x - 20, center_y + 5),  # adjust offset if needed
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.4,  # font scale
+            (0, 0, 255),  # red text
+            1,
+            cv2.LINE_AA,
+        )
+
+    # Blend overlay with original image
+    alpha = 0.3 
+    overlayed = cv2.addWeighted(overlay, alpha, im, 1 - alpha, 0, im)
+    return board_dict, overlayed
+
+
+def detect_move(im1, im2, verbose=False, show=False, plot=False) -> str:
+    """
+    detects move by comparing two images of the board,
+    before and after the opponent's move.
+    Returns the move in UCI format.
+    This method picks up on changes to squares based on highlights
+    and shadows generated by the pieces
+    being on squares, and the changes
+    in those highlights and shadows when pieces move.
+
+    :param im1: Description
+    :param im2: Description
+    """
+    # Greyscale the images to simplify comparison
+    grey1 = cv2.cvtColor(im1, cv2.COLOR_BGR2GRAY)
+    grey2 = cv2.cvtColor(im2, cv2.COLOR_BGR2GRAY)
+
+    flat_im_1 = perspective_correction(grey1, show=show)
+    flat_im_2 = perspective_correction(grey2, show=show)
+
+    board_size, square_size = board_size_from_checkers(flat_im_1)
+
+    cropped_im_1 = crop_img(flat_im_1, board_size)
+    cropped_im_2 = crop_img(flat_im_2, board_size)
+
+    if show:
+        cv2.imshow("Flat Image 1", cropped_im_1)
+        cv2.imshow("Flat Image 2", cropped_im_2)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+
+    square_dict_1, overlayed_im_1 = noise_scores(cropped_im_1, square_size, verbose=verbose, plot=plot)
+    square_dict_2, overlayed_im_2 = noise_scores(cropped_im_2, square_size, verbose=verbose, plot=plot)
+
+    if show:
+        cv2.imshow("Overlayed image", overlayed_im_1)
+        cv2.imshow("Overlayed image", overlayed_im_2)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+    
+    for (square, info_1), (square, info_2) in zip(square_dict_1.items(), square_dict_2.items()):
+        if info_1["occupied"] and not info_2["occupied"]:
+            now_empty = square
+        elif not info_1["occupied"] and info_2["occupied"]:
+            now_occluded = square
+
+    move = f"{now_empty}{now_occluded}"
+
+    if verbose:
+        print(move)
+
+    return move
+
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+images_path = os.path.join(BASE_DIR, "test_images")
+
+image_1_path = os.path.join(images_path, "test_1.png")
+image_2_path = os.path.join(images_path, "test_2.png")
+
+detect_move(cv2.imread(image_1_path), cv2.imread(image_2_path), verbose=True)

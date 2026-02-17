@@ -1,0 +1,458 @@
+<?xml version="1.0" ?>
+<sdf version="1.9">
+  <model name="test">
+    <static>true</static>
+    <link name="testlink">
+      <visual name="White Rook H1">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>White Rook H1</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="White Rook A1">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>White Rook A1</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="White Queen">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>White Queen</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="White Pawns">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>White Pawns</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="White king">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>White king</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="White Horse G1">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>White Horse G1</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="White Horse B1">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>White Horse B1</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="White Bishop F1">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>White Bishop F1</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="White Bishop C1">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>White Bishop C1</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="Board_0">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>Board</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="Board_1">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>Board</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="Black Rook H8">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>Black Rook H8</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="Black Rook A8">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>Black Rook A8</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="Black Queen">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>Black Queen</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="Black Pawns">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>Black Pawns</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="Black King">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>Black King</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="Black Horse G8">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>Black Horse G8</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="Black Horse B8">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>Black Horse B8</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="Black Bishop F8">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>Black Bishop F8</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="Black Bishop C8">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>Black Bishop C8</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="Part 1_0">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>Part 1</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="Part 1_1">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>Part 1</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="Part 1.001_0">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>Part 1.001</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="Part 1.001_1">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>Part 1.001</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="Part 1.002_0">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>Part 1.002</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="Part 1.002_1">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>Part 1.002</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="Part 1.003_0">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>Part 1.003</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="Part 1.003_1">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>Part 1.003</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="aluminum profile rail table.001_0">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>aluminum profile rail table.001</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="aluminum profile rail table.001_1">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>aluminum profile rail table.001</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="White Pawns.001">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>White Pawns.001</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="Black Pawns.001">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>Black Pawns.001</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="White Pawns.002">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>White Pawns.002</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="Black Pawns.002">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>Black Pawns.002</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="White Pawns.003">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>White Pawns.003</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="White Pawns.004">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>White Pawns.004</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="White Pawns.005">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>White Pawns.005</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="Black Pawns.003">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>Black Pawns.003</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="Black Pawns.004">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>Black Pawns.004</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="Black Pawns.005">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>Black Pawns.005</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="White Pawns.006">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>White Pawns.006</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="White Pawns.007">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>White Pawns.007</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="Black Pawns.006">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>Black Pawns.006</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="Black Pawns.007">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+            <submesh>
+              <name>Black Pawns.007</name>
+            </submesh>
+          </mesh>
+        </geometry>
+      </visual>
+      <collision name="collision">
+        <geometry>
+          <mesh>
+            <uri>meshes/chess_world.dae</uri>
+          </mesh>
+        </geometry>
+        <surface>
+          <contact/>
+        </surface>
+      </collision>
+    </link>
+  </model>
+</sdf>

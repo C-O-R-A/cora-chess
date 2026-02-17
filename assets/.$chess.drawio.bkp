@@ -1,4 +1,4 @@
-<mxfile host="Electron" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/28.2.5 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36" version="28.2.5" pages="3">
+<mxfile host="Electron" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/27.0.9 Chrome/134.0.6998.205 Electron/35.4.0 Safari/537.36" version="27.0.9" pages="4">
   <diagram name="Board setup" id="jUG5UxBXnrVD0_t6-UJI">
     <mxGraphModel dx="1678" dy="985" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
@@ -385,6 +385,26 @@
         </mxCell>
         <mxCell id="nlHBrkEzNxSHYdTJeQwp-15" value="$${&#xa;    {}^{M_1}\mathbf{p}_{B_O}=\begin{bmatrix}t \\\ t \\\ 0 \end{bmatrix},&#xa;}$$" style="text;whiteSpace=wrap;html=1;fontColor=#FFFFFF;" vertex="1" parent="1">
           <mxGeometry x="440" y="530" width="104" height="70" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="7OYMoy4taOa7mM52_ol6" name="marker corners">
+    <mxGraphModel dx="369" dy="340" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="cxbvlLo0lpLwzy-UgcYF-1" value="" style="shape=image;aspect=fixed;image=data:image/png,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAAAAACIM/FCAAADBElEQVR4Ad3BMRHAQBDEMJs/6A0EF99kTpIj5Ag5Qo6QI+QIOUKOkCPkCDlCjpAj5Ag5Qo6QI+QIOUKOkCPkCDlCjpAj5Ag5Qo6QI+QIOUKOkCPkCDlCjpAj5Ag5Qo6QI+QIOUKOkCPkCDlCjpAj5Ag5Qo6QI+QIOUKOkCPkCDlCjpAj5Ag5Qo6QI+QIOULS+AEJksYPSJA0fkCCpPEDEiSNH5AgafyABEnjByRIGj8gQdL4AQmSxg9IkDR+QIKk8QMSJI0fkCBp/IAESeMHJEgaPyBB0vgBCZLGD0iQNH5AgqTxAxIkjR+QIGn8gARJ4wckSBo/IEHS+AEJksYPSJA0fkCCpPEDEiSNH5AgafyABEnjByRIGj8gQdL4AQmSRpBnI0iQNII8G0GCpBHk2QgSJI0gz0aQIGkEeTaCBEkjyLMRJEgaQZ6NIEHSCPJsBAmSRpBnI0iQNII8G0GCpBHk2QgSJI0gz0aQIGkEeTaCBEkjyLMRJEgaQZ6NIEHSCPJsBAmSRpBnI0iQNII8G0GCpBHk2QgSJI0gz0aQIGkEeTaCBEkjyLMRJEgaQZ6NIEHSCPJsBAmSRpBnI0iQNII8G0GCpBHk2QgSJI0gz0aQIGkEeTaCBEkjyLMRJEgaQZ6NIEHSCPJsBAmSRpBnI0iQNII8G0GCpBEkjCKvJI0gYRR5JWkECaPIK0kjSBhFXkkaQcIo8krSCBJGkVeSRpAwirySNIKEUeSVpBEkjCKvJI0gYRR5JWkECaPIK0kjSBhFXkkaQcIo8krSCBJGkVeSRpAwirySNIKEUeSVpBEkjCKvJI0gYRR5JWkECaPIK0kjSBhFXkkaQcIo8krSCBJGkVeSRpAwirySNIKEUeSVpBEkjCKvJI0gYRR5JWkECaPIK0kjSBhFXkkaQcIo8krSCBJGkVeSRpAwirySNIKEUeSVpBEkjCKv5Ag5Qo6QI+QIOUKOkCPkCDlCjpAj5Ag5Qo6QI+QIOUKOkCPkCDlCjpAj5Ag5Qo6QI+QIOUKOkCPkiA9v7KfJsmW8mwAAAABJRU5ErkJggg==;" vertex="1" parent="1">
+          <mxGeometry x="320" y="270" width="200" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="cxbvlLo0lpLwzy-UgcYF-3" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=none;strokeColor=#FF0000;" vertex="1" parent="1">
+          <mxGeometry x="316" y="265" width="10" height="10" as="geometry" />
+        </mxCell>
+        <mxCell id="cxbvlLo0lpLwzy-UgcYF-4" value="&lt;span style=&quot;font-family: &amp;quot;Droid Sans Mono&amp;quot;, &amp;quot;monospace&amp;quot;, monospace; font-size: 11px; font-style: italic; white-space: pre; color: rgb(18, 18, 18);&quot;&gt;$$\mathcal{F}_W$$&lt;/span&gt;&lt;span style=&quot;font-family: &amp;quot;Droid Sans Mono&amp;quot;, &amp;quot;monospace&amp;quot;, monospace; font-size: 11px; font-style: italic; white-space: pre; color: rgb(18, 18, 18);&quot;&gt;$$\mathcal{F}_W$$&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="350" y="240" width="240" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="xiO06XfltkKNdPBhmjGD-1" value="&lt;span style=&quot;background-color: rgb(255, 255, 255);&quot;&gt;&lt;span style=&quot;forced-color-adjust: none; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; font-family: &amp;quot;Droid Sans Mono&amp;quot;, &amp;quot;monospace&amp;quot;, monospace; font-size: 11px; font-style: italic; white-space: pre; color: rgb(18, 18, 18); box-shadow: none !important;&quot;&gt;$$\mathcal{F}_W$$&lt;/span&gt;&lt;span style=&quot;forced-color-adjust: none; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; font-family: &amp;quot;Droid Sans Mono&amp;quot;, &amp;quot;monospace&amp;quot;, monospace; font-size: 11px; font-style: italic; white-space: pre; color: rgb(18, 18, 18); box-shadow: none !important;&quot;&gt;$$\mathcal{F}_W$$&lt;/span&gt;&lt;/span&gt;" style="text;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="510" y="200" width="260" height="40" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
