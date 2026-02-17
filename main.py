@@ -1,4 +1,3 @@
-# ...existing code...
 import asyncio
 import signal
 from enum import Enum, auto
@@ -8,8 +7,9 @@ import numpy as np
 import chess
 from sre_constants import SUCCESS, FAILURE
 
-from codi import CoraClient, GuiClient
-from chess.chess_cora import Agent, Board
+from codi import CoraClient
+from chess.Agent import Agent 
+from Board import board
 import tfs.transforms as tf
 
 logger = logging.getLogger("robot_chess")
@@ -21,7 +21,7 @@ class CoraChess:
     def __init__(self):
         self.handlers = {}
         self.robot_client = CoraClient()
-        self.board = Board()
+        self.board = board()
         self.agent = Agent(model=None)  # Load trained model
 
     ###################
@@ -33,7 +33,8 @@ class CoraChess:
     #############################
 
     async def pick_and_place(self, move):
-        from_sq, to_sq = move.from_square, move.to_square
+        from_sq = board.move.from_square
+        to_sq =  move.to_square
         approach_pose = np.array([0.0, 0.0, 0.3],
                                  [0.0, 0.0, 0.0])
 
